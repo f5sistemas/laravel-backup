@@ -2,6 +2,7 @@
 
 namespace Spatie\Backup\Test\Unit;
 
+use Spatie\DbDumper\Databases\Firebird;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\Sqlite;
 use Spatie\DbDumper\Databases\PostgreSql;
@@ -34,6 +35,22 @@ class DbDumperFactoryTest extends TestCase
     {
         $this->assertInstanceOf(MySql::class, DbDumperFactory::createFromConnection('mysql'));
         $this->assertInstanceOf(PostgreSql::class, DbDumperFactory::createFromConnection('pgsql'));
+    }
+
+    /** @test **/
+    public function it_can_create_instances_of_firebird()
+    {
+        $dbConfig = [
+            'driver' => 'firebird',
+            'host' => 'localhost',
+            'username' => 'sysdba',
+            'password' => 'masterkey',
+            'database' => 'employee',
+        ];
+
+        $this->app['config']->set('database.connections.firebird', $dbConfig);
+
+        $this->assertInstanceOf(Firebird::class, DbDumperFactory::createFromConnection('firebird'));
     }
 
     /** @test */

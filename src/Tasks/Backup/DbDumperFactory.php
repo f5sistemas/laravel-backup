@@ -3,6 +3,7 @@
 namespace Spatie\Backup\Tasks\Backup;
 
 use Spatie\DbDumper\DbDumper;
+use Spatie\DbDumper\Databases\Firebird;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\Sqlite;
 use Spatie\DbDumper\Databases\MongoDb;
@@ -30,6 +31,11 @@ class DbDumperFactory
 
         if ($dbDumper instanceof MySql) {
             $dbDumper->setDefaultCharacterSet($dbConfig['charset'] ?? '');
+        }
+
+        if ($dbDumper instanceof Firebird) {
+            $dbDumper->setGbakPath($dbConfig['gbak_path'] ?? '')
+                ->setFbkFile($dbConfig['fbk_file_path'] ?? '');
         }
 
         if (isset($dbConfig['port'])) {
@@ -61,6 +67,10 @@ class DbDumperFactory
 
         if ($driver === 'mongodb') {
             return new MongoDb();
+        }
+
+        if ($driver === 'firebird') {
+            return new Firebird();
         }
 
         throw CannotCreateDbDumper::unsupportedDriver($driver);
